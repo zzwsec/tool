@@ -2,6 +2,8 @@
 
 set -eEuo pipefail
 
+# https://web.archive.org/web/20260116131320/https://v2.hysteria.network/zh/docs/advanced/Full-Server-Config/
+# https://wiki.metacubex.one/config/proxies/hysteria2/
 BASE_DOWN_URL="https://github.com/apernet/hysteria/releases/latest/download/hysteria-linux"
 BIN_FILENAME="/usr/local/bin/hysteria"
 CONFIG_DIR="/etc/hysteria"
