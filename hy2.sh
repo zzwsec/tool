@@ -2,7 +2,7 @@
 
 set -eEuo pipefail
 
-# https://web.archive.org/web/20260116131320/https://v2.hysteria.network/zh/docs/advanced/Full-Server-Config/
+# https://v2.hysteria.network/zh/docs/advanced/Full-Server-Config/
 # https://wiki.metacubex.one/config/proxies/hysteria2/
 BASE_DOWN_URL="https://github.com/apernet/hysteria/releases/latest/download/hysteria-linux"
 BIN_FILENAME="/usr/local/bin/hysteria"
@@ -243,7 +243,7 @@ print_summary() {
 Option 1: YAML Config
 -------------------------------------------------------
 proxies:
-  - name: "Apernet-SG"
+  - name: "${HOSTNAME}"
     type: hysteria2
     server: ${ACME_DOMAIN}
     port: ${PORT}
@@ -258,7 +258,7 @@ proxies:
 
 Option 2: URI Scheme
 -------------------------------------------------------
-hy2://${PASSWORD}@${ACME_DOMAIN}:${PORT}?sni=${ACME_DOMAIN}&up=50mbps&down=500mbps#Apernet-SG
+hy2://${PASSWORD}@${ACME_DOMAIN}:${PORT}?sni=${ACME_DOMAIN}&up=50mbps&down=500mbps#${HOSTNAME}
 -------------------------------------------------------
 
 📌 Important Notes
