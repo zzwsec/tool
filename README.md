@@ -8,3 +8,4 @@
 
 - **[hy2](hy2/)** — Hysteria 2，UDP 暴力美学
 - **[xray](xray/)** — Xray，经典老牌，稳如老狗
+- **[mihomo](mihomo/)** — Mihomo，规则一堆，全靠玄学

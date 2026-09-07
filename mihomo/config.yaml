@@ -1,0 +1,221 @@
+# https://github.com/MetaCubeX/mihomo/blob/Meta/docs/config.yaml
+mixed-port: 7890
+redir-port: 7891
+tproxy-port: 7892
+allow-lan: true
+bind-address: 192.168.5.1
+ipv6: true
+unified-delay: true
+tcp-concurrent: true
+log-level: warning
+find-process-mode: off
+keep-alive-idle: 600
+keep-alive-interval: 15
+disable-keep-alive: false
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+external-controller: 192.168.5.1:9090
+secret: "<PASSWORD>"
+external-ui: "/etc/mihomo/ui"
+external-ui-name: zashboard
+external-ui-url: "https://cdn.gh-proxy.org/github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
+
+tun:
+  enable: true
+  stack: mixed
+  dns-hijack: ["any:53", "tcp://any:53"]
+  device: mihomo
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+  mtu: 1492
+  route-exclude-address:
+    - 172.20.1.0/24
+  exclude-uid:
+    - 999
+
+dns:
+  enable: true
+  prefer-h3: false
+  cache-algorithm: arc
+  enhanced-mode: fake-ip
+  listen: 192.168.5.1:1053
+  ipv6: false
+  respect-rules: true
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+    - "rule-set:private-domain"
+    - "rule-set:ntp-domain"
+    - "rule-set:connectivity-domain"
+  default-nameserver: 
+    - 223.5.5.5
+    - 1.12.12.12
+    - 180.184.1.1
+    - 61.139.2.69
+    - 180.76.76.76
+  nameserver:
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+  proxy-server-nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  nameserver-policy:
+    "rule-set:ads-domain,spotify-ads-domain": rcode://success
+    "+.ping0.cc": rcode://success
+    "rule-set:cn-domain,kaspersky-domain,private-domain,ntp-domain,connectivity-domain":
+      - https://dns.alidns.com/dns-query
+      - https://doh.pub/dns-query
+
+geo-auto-update: true
+geo-update-interval: 72
+geodata-loader: standard
+geox-url:
+  geoip: https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
+  geosite: https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
+  mmdb: https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@release/country.mmdb
+  asn: https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@release/GeoLite2-ASN.mmdb
+
+proxy-providers:
+  Airport1:
+    url: "<PROVIDER-URL>"
+    type: http
+    interval: 86400
+    client-fingerprint: firefox
+    health-check:
+      enable: true
+      url: https://connectivitycheck.gstatic.com/generate_204
+      interval: 300
+    proxy: DIRECT
+
+proxies:
+  - name: wg-cloud
+    type: wireguard
+    server: <IP>
+    port: <PORT>
+    ip: 10.8.0.3/32
+    mtu: 1400
+    public-key: <PUBLICK-KEY>
+    private-key: <PRIVATE-KEY>
+    udp: true
+
+anchor:
+  rule-ip: &rule-ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  rule-domain: &rule-domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  airport-select: &airport-select {type: select, use: [Airport1], proxies: [🔄 Fallback, DIRECT]}
+
+proxy-groups:
+  - { name: 🔄 Fallback, type: fallback, use: [Airport1], url: "https://connectivitycheck.gstatic.com/generate_204" }
+  - { name: 🚀 代理, <<: *airport-select }
+  - { name: 🐳 Docker, <<: *airport-select }
+  - { name: 🔎 Google, <<: *airport-select }
+  - { name: 🪟 Microsoft, <<: *airport-select }
+  - { name: ♾️ Meta, <<: *airport-select }
+  - { name: 🐱 CodeRepo, <<: *airport-select }
+  - { name: 🤖 AI, <<: *airport-select }
+  - { name: 🛩️ Telegram, <<: *airport-select }
+  - { name: 👽 Reddit, <<: *airport-select }
+  - { name: 🎥 NETFLIX, <<: *airport-select }
+  - { name: 📡 Speedtest, <<: *airport-select }
+  - { name: 🎮 Games, <<: *airport-select }
+  - { name: 🍎 Apple, <<: *airport-select }
+  - { name: 🐔 NodeSeek, <<: *airport-select }
+  - { name: 🎧 Spotify, <<: *airport-select }
+  - { name: 💬 LINE, <<: *airport-select }
+  - { name: 🐟 漏网之鱼, <<: *airport-select }
+
+rules:
+  - RULE-SET,spotify-ads-domain,REJECT
+  - RULE-SET,ads-domain,REJECT
+  - RULE-SET,icloudprivaterelay-domain,REJECT
+  - RULE-SET,httpdns-cn-domain,REJECT
+  - RULE-SET,win-spy-domain,REJECT
+  - DOMAIN-SUFFIX,ping0.cc,REJECT
+
+  - IP-CIDR,10.46.96.0/22,wg-cloud,no-resolve
+  - IP-CIDR,10.8.0.0/24,wg-cloud,no-resolve
+
+  - RULE-SET,private-domain,DIRECT
+  - RULE-SET,private-ip,DIRECT,no-resolve
+  - RULE-SET,ntp-domain,DIRECT
+  - RULE-SET,connectivity-domain,DIRECT
+
+  - RULE-SET,kaspersky-domain,DIRECT
+  - RULE-SET,apple-cn-domain,DIRECT
+  - RULE-SET,apple-domain,🍎 Apple
+  - RULE-SET,nodeseek-domain,🐔 NodeSeek
+  - RULE-SET,google-domain,🔎 Google
+  - RULE-SET,gitlab-domain,🐱 CodeRepo
+  - RULE-SET,github-domain,🐱 CodeRepo
+  - RULE-SET,microsoft-cn-domain,🪟 Microsoft
+  - RULE-SET,microsoft-domain,🪟 Microsoft
+  - RULE-SET,meta-domain,♾️ Meta
+  - RULE-SET,ai-domain,🤖 AI
+  - RULE-SET,docker-domain,🐳 Docker
+  - RULE-SET,speedtest-domain,📡 Speedtest
+  - RULE-SET,telegram-domain,🛩️ Telegram
+  - RULE-SET,steam-domain,🎮 Games
+  - RULE-SET,epicgames-domain,🎮 Games
+  - RULE-SET,reddit-domain,👽 Reddit
+  - RULE-SET,netflix-domain,🎥 NETFLIX
+  - RULE-SET,spotify-domain,🎧 Spotify
+  - RULE-SET,line-domain,💬 LINE
+  - RULE-SET,adobe-domain,🚀 代理
+
+  - RULE-SET,apple-ip,🍎 Apple,no-resolve
+  - RULE-SET,google-ip,🔎 Google,no-resolve
+  - RULE-SET,telegram-ip,🛩️ Telegram,no-resolve
+  - RULE-SET,netflix-ip,🎥 NETFLIX,no-resolve
+
+  - RULE-SET,cn-domain,DIRECT
+  - RULE-SET,gfw-domain,🚀 代理
+  - RULE-SET,geolocation-!cn,🚀 代理
+  - RULE-SET,cn-ip,DIRECT
+
+  - MATCH,🐟 漏网之鱼
+
+rule-providers:
+  spotify-ads-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/spotify@ads.mrs" }
+  ads-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ads-all.mrs" }
+  icloudprivaterelay-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/icloudprivaterelay.mrs" }
+  httpdns-cn-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-httpdns-cn.mrs" }
+  win-spy-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/win-spy.mrs" }
+
+  private-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs" }
+  private-ip: { <<: *rule-ip, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/private.mrs" }
+  ntp-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ntp.mrs" }
+  connectivity-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/zzwsec/mihomo-rules@main/connectivity-domain.mrs" }
+
+  kaspersky-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/kaspersky.mrs" }
+  apple-cn-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple-cn.mrs" }
+  apple-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple.mrs" }
+  nodeseek-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/nodeseek.mrs" }
+  google-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google.mrs" }
+  gitlab-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/gitlab.mrs" }
+  github-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/github.mrs" }
+  microsoft-cn-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/microsoft@cn.mrs" }
+  microsoft-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/microsoft.mrs" }
+  meta-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/meta.mrs" }
+  ai-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ai-!cn.mrs" }
+  docker-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/docker.mrs" }
+  speedtest-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/ookla-speedtest.mrs" }
+  telegram-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs" }
+  steam-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/steam.mrs" }
+  epicgames-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/epicgames.mrs" }
+  reddit-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/reddit.mrs" }
+  netflix-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/netflix.mrs" }
+  spotify-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/spotify.mrs" }
+  line-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/line.mrs" }
+  adobe-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/adobe.mrs" }
+
+  apple-ip: { <<: *rule-ip, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo-lite/geoip/apple.mrs" }
+  google-ip: { <<: *rule-ip, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/google.mrs" }
+  telegram-ip: { <<: *rule-ip, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs" }
+  netflix-ip: { <<: *rule-ip, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/netflix.mrs" }
+
+  cn-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs" }
+  gfw-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/gfw.mrs" }
+  geolocation-!cn: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/geolocation-!cn.mrs" }
+  cn-ip: { <<: *rule-ip, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/cn.mrs" }

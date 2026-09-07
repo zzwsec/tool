@@ -4,9 +4,9 @@ services:
     container_name: xray
     restart: unless-stopped
     network_mode: bridge
-    ports:
-      - "30000:30000"
     # environment:
     #   SNI: example.com
-    # volumes:
-    #   - ./data:/xray/data
+    ports:
+      - "30000:30000"
+    volumes:
+      - ./data:/xray/data
