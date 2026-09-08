@@ -1,0 +1,12 @@
+services:
+  sing-box:
+    image: zzwsec/sing-box
+    container_name: sing-box
+    restart: unless-stopped
+    network_mode: bridge
+    # environment:
+    #   SNI: music.apple.com
+    ports:
+      - "30000:30000"
+    volumes:
+      - ./data:/sing-box/data
