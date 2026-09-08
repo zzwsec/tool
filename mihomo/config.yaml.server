@@ -1,11 +1,5 @@
 mode: rule
 
-geo-auto-update: true
-geo-update-interval: 24
-geox-url:
-  geoip: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
-  geosite: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
-
 log-level: warning
 ipv6: true
 
@@ -18,8 +12,22 @@ proxies:
     type: direct
     ip-version: ipv4-prefer
 
+rule-providers:
+  meituan:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/meituan.mrs"
+
+  private-ip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"
+
 listeners:
-  # VLESS + REALITY + Vision
   - name: "VLESS-REALITY-IN"
     type: vless
     port: <PORT>
@@ -30,12 +38,12 @@ listeners:
         flow: xtls-rprx-vision
     reality-config:
       dest: <SNI>:443
-      private-key: "PRIVATE-KEY"  # mihomo generate reality-keypair
+      private-key: "PRIVATE-KEY"    # mihomo generate reality-keypair
       short-id: ["<SHORT-ID>"]
       server-names: ["<SNI>"]
 
 rules:
-  - GEOSITE,meituan,REJECT
+  - RULE-SET,meituan,REJECT
   - DOMAIN-SUFFIX,ping0.cc,REJECT
-  - GEOIP,private,REJECT
+  - RULE-SET,private-ip,REJECT
   - MATCH,DIRECT-IPv4-PREFER
