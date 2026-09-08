@@ -123,15 +123,28 @@ validate_cf_token() {
     fi
 }
 
-download_hysteria() {
+download_hysteria() (
+    local tmp_bin
+    tmp_bin=$(mktemp "${BIN_FILENAME}.XXXXXX")
+    trap 'rm -f "$tmp_bin"' EXIT
+
     echo "⏳ Downloading Hysteria 2 core..."
-    if grep -qi "avx" /proc/cpuinfo; then
-        wget "${DOWN_URL}-avx" -O "${BIN_FILENAME}"
-    else
-        wget "${DOWN_URL}" -O "${BIN_FILENAME}"
+    if [ "$ARCH_TYPE" = "amd64" ]; then
+        wget "${DOWN_URL}-avx" -O "$tmp_bin"
+        chmod 755 "$tmp_bin"
+        # Let the Go runtime check CPU features and OS support.
+        if "$tmp_bin" version >/dev/null 2>&1; then
+            mv -f "$tmp_bin" "$BIN_FILENAME"
+            return
+        fi
+        echo "AVX binary failed to run; falling back to the standard binary."
     fi
-    chmod 755 "${BIN_FILENAME}"
-}
+
+    wget "$DOWN_URL" -O "$tmp_bin"
+    chmod 755 "$tmp_bin"
+    "$tmp_bin" version
+    mv -f "$tmp_bin" "$BIN_FILENAME"
+)
 
 setup_dns() {
     echo "⏳ Configuring Cloudflare DNS..."
@@ -185,7 +198,7 @@ outbounds:
   - name: direct_output 
     type: direct
     direct:
-      mode: 64
+      mode: 46
     fastOpen: true
 
 auth:
@@ -195,7 +208,7 @@ auth:
 masquerade:
   type: proxy
   proxy:
-    url: https://www.nus.edu.sg/
+    url: https://music.apple.com
     rewriteHost: true
 EOF
 
@@ -247,6 +260,7 @@ proxies:
     type: hysteria2
     server: ${ACME_DOMAIN}
     port: ${PORT}
+    udp: true
     password: "${PASSWORD}"
     sni: ${ACME_DOMAIN}
     up: 50 Mbps       # Client upload limit
