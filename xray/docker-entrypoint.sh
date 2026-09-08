@@ -11,13 +11,15 @@ if [ "$#" -gt 0 ]; then
     exec "$@"
 fi
 
-if [ -e /xray/config.json ]; then
-    [ -f /xray/config.json ] && [ -s /xray/config.json ] && [ -r /xray/config.json ] \
-        || die '/xray/config.json must be a readable, non-empty file.'
+config=/xray/config.json
 
-    printf 'Using existing /xray/config.json.\n'
-    xray run -test -config /xray/config.json
-    exec xray run -config /xray/config.json
+if [ -e "$config" ]; then
+    [ -f "$config" ] && [ -s "$config" ] && [ -r "$config" ] \
+        || die "$config exists but must be a readable, non-empty regular file."
+
+    printf 'Using existing %s.\n' "$config"
+    xray run -test -config "$config"
+    exec xray run -config "$config"
 fi
 
 SNI=${SNI:-music.apple.com}
@@ -149,7 +151,7 @@ if [ -n "$address" ]; then
 fi
 
 mv -f "$credentials_tmp" "$credentials"
-mv -f "$config_tmp" /xray/config.json
+mv -f "$config_tmp" "$config"
 mv -f "$link_tmp" /xray/data/link.txt
 
 if [ -s /xray/data/link.txt ]; then
@@ -160,4 +162,4 @@ else
     printf 'Warning: Public IP lookup failed; VLESS link was not generated. Xray will still start.\n' >&2
 fi
 
-exec xray run -config /xray/config.json
+exec xray run -config "$config"
