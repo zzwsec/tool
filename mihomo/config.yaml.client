@@ -64,7 +64,6 @@ dns:
     - https://doh.pub/dns-query
   nameserver-policy:
     "+.ping0.cc": rcode://success
-    "rule-set:ads-domain": rcode://success
     "rule-set:cn-domain,kaspersky-domain,private-domain,ntp-domain,connectivity-domain":
       - https://dns.alidns.com/dns-query
       - https://doh.pub/dns-query
@@ -125,7 +124,6 @@ proxy-groups:
   - { name: 🐟 漏网之鱼, <<: *airport-select }
 
 rules:
-  - RULE-SET,ads-domain,REJECT
   - RULE-SET,icloudprivaterelay-domain,REJECT
   - RULE-SET,httpdns-cn-domain,REJECT
   - RULE-SET,win-spy-domain,REJECT
@@ -174,7 +172,6 @@ rules:
   - MATCH,🐟 漏网之鱼
 
 rule-providers:
-  ads-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/privacy-protection-tools/anti-ad.github.io@master/docs/mihomo.mrs" }
   icloudprivaterelay-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/icloudprivaterelay.mrs" }
   httpdns-cn-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-httpdns-cn.mrs" }
   win-spy-domain: { <<: *rule-domain, url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/win-spy.mrs" }
