@@ -146,7 +146,7 @@ if [ -n "$address" ]; then
         *:*) address="[$address]" ;;
     esac
 
-    printf 'vless://%s@%s:30000?encryption=none&security=reality&flow=xtls-rprx-vision&type=tcp&sni=%s&pbk=%s&sid=%s&fp=firefox#REALITY\n' \
+    printf 'vless://%s@%s:30000?encryption=none&security=reality&flow=xtls-rprx-vision&type=tcp&sni=%s&pbk=%s&sid=%s&fp=chrome#REALITY\n' \
         "$UUID" "$address" "$SNI" "$PUBLIC_KEY" "$SHORT_ID" >"$link_tmp"
 fi
 

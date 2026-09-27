@@ -12,6 +12,6 @@ docker buildx create \
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t zzwsec/xray:latest \
-  -t zzwsec/xray:v26.7.28 \
+  -t zzwsec/xray:v26.9.9 \
   --push .
 ```
