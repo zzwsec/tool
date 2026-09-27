@@ -9,4 +9,5 @@
 - **[hy2](hy2/)** — Hysteria 2，UDP 暴力美学
 - **[mihomo](mihomo/)** — Mihomo，规则一堆，全靠玄学
 - **[sing-box](sing-box/)** — Sing-Box，版本一升，配置全崩
+- **[smartdns](smartdns/)** — SmartDNS，名字挺智能，解析看缘分
 - **[xray](xray/)** — Xray，经典老牌，稳如老狗
