@@ -11,3 +11,4 @@
 - **[sing-box](sing-box/)** — Sing-Box，版本一升，配置全崩
 - **[smartdns](smartdns/)** — SmartDNS，名字挺智能，解析看缘分
 - **[xray](xray/)** — Xray，经典老牌，稳如老狗
+- **[r3s](r3s/)** — NanoPi R3S，一人折腾，全家断网
