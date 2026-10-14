@@ -1,0 +1,19 @@
+[Unit]
+Description=Realm Proxy Service
+Documentation=https://github.com/zhboner/realm
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/realm
+ExecStart=/usr/local/bin/realm -c /etc/realm/realm.toml
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=realm
+
+[Install]
+WantedBy=multi-user.target

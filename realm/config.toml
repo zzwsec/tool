@@ -1,0 +1,12 @@
+[log]
+level = "info"
+output = "stdout"
+
+[network]
+no_tcp = false
+use_udp = false
+ipv6_only = false
+
+[[endpoints]]
+listen = "0.0.0.0:5001"
+remote = "192.0.2.2:443"

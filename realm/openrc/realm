@@ -1,0 +1,23 @@
+#!/sbin/openrc-run
+
+name="realm"
+description="Realm Proxy Service"
+
+command="/usr/local/bin/realm"
+command_args="-c /etc/realm/realm.toml"
+directory="/etc/realm"
+
+supervisor="supervise-daemon"
+pidfile="/run/${RC_SVCNAME}.pid"
+respawn_delay=5
+respawn_max=0
+
+output_logger="/bin/busybox logger -t realm -p daemon.info"
+error_logger="/bin/busybox logger -t realm -p daemon.err"
+
+rc_ulimit="-n 65536"
+
+depend() {
+    need net
+    use syslog
+}

@@ -4,7 +4,7 @@ allow-lan: true
 bind-address: 192.168.5.1
 lan-allowed-ips:
   - 192.168.5.0/24
-ipv6: true
+ipv6: false
 unified-delay: true
 tcp-concurrent: true
 log-level: warning
