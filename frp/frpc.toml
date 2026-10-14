@@ -1,0 +1,19 @@
+serverAddr = "SERVER PUBLIC IP"
+serverPort = 47000
+loginFailExit = false
+
+auth.method = "token"
+auth.token = "REPLACE_WITH_SAME_RANDOM_TOKEN"
+
+transport.tls.enable = true
+
+log.to = "console"
+log.level = "info"
+log.disablePrintColor = true
+
+[[proxies]]
+name = "ssh"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 22
+remotePort = 47001

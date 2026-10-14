@@ -1,0 +1,11 @@
+bindAddr = "0.0.0.0"
+bindPort = 47000
+
+auth.method = "token"
+auth.token = "REPLACE_WITH_SAME_RANDOM_TOKEN" # openssl rand -hex 32
+
+transport.tls.force = true
+
+log.to = "console"
+log.level = "info"
+log.disablePrintColor = true

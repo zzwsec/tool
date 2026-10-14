@@ -1,0 +1,23 @@
+#!/sbin/openrc-run
+
+name="frpc"
+description="frp Client"
+
+command="/usr/local/bin/frpc"
+command_args="-c /etc/frp/frpc.toml"
+directory="/etc/frp"
+
+supervisor="supervise-daemon"
+pidfile="/run/${RC_SVCNAME}.pid"
+respawn_delay=5
+respawn_max=0
+
+output_logger="/bin/busybox logger -t frpc -p daemon.info"
+error_logger="/bin/busybox logger -t frpc -p daemon.err"
+
+rc_ulimit="-n 65536"
+
+depend() {
+    need net
+    use syslog
+}
