@@ -12,5 +12,6 @@
 - **[smartdns](smartdns/)** — SmartDNS，名字挺智能，解析看缘分
 - **[realm](realm/)** — Realm，配置简单，出问题猜去吧
 - **[frp](frp/)** — frp，穿透只是开始，忘记端口才是日常
+- **[wg](wg/)** — WireGuard，连上就忘，断了才想起
 - **[xray](xray/)** — Xray，经典老牌，稳如老狗
 - **[r3s](r3s/)** — NanoPi R3S，一人折腾，全家断网
