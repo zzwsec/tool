@@ -463,7 +463,18 @@ proxy-providers:
       interval: 300
     proxy: DIRECT
 
-proxies: []
+proxies:
+  - name: wg-cloud
+    type: wireguard
+    ip-stack:
+      mode: mips
+    server: <IP>
+    port: <PORT>
+    ip: 10.8.0.3/32
+    mtu: 1400
+    public-key: <PUBLICK-KEY>
+    private-key: <PRIVATE-KEY>
+    udp: true
 
 anchor:
   rule-ip: &rule-ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}

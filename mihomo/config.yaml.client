@@ -90,6 +90,8 @@ proxy-providers:
 proxies:
   - name: wg-cloud
     type: wireguard
+    ip-stack:
+      mode: mips
     server: <IP>
     port: <PORT>
     ip: 10.8.0.3/32
